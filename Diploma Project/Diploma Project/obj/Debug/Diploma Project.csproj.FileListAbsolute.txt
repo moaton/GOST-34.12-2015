@@ -1,0 +1,13 @@
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\bin\Debug\Diploma Project.exe.config
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\bin\Debug\Diploma Project.exe
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\bin\Debug\Diploma Project.pdb
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma Project.csproj.AssemblyReference.cache
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma_Project.Properties.Resources.resources
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma Project.csproj.GenerateResource.cache
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma Project.csproj.CoreCompileInputs.cache
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma Project.exe
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma Project.pdb
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma_Project.MainForm.resources
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma_Project.en_local.resources
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma_Project.kz_local.resources
+C:\Users\moaton\source\repos\Diploma Project\Diploma Project\obj\Debug\Diploma_Project.ru_local.resources
