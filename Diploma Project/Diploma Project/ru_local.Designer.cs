@@ -97,6 +97,15 @@ namespace Diploma_Project {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Последовательность байтов.
+        /// </summary>
+        internal static string Byte_sequence {
+            get {
+                return ResourceManager.GetString("Byte sequence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Выбрать.
         /// </summary>
         internal static string Choose {
@@ -268,6 +277,15 @@ namespace Diploma_Project {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Количество блоков.
+        /// </summary>
+        internal static string Numbers_of_blocks {
+            get {
+                return ResourceManager.GetString("Numbers of blocks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Время выполнения операции.
         /// </summary>
         internal static string Operation_execution_time {
@@ -336,6 +354,24 @@ namespace Diploma_Project {
         internal static string Tact {
             get {
                 return ResourceManager.GetString("Tact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Файл расшифрован и сохранен здесь.
+        /// </summary>
+        internal static string The_file_is_decrypted_and_saved_here {
+            get {
+                return ResourceManager.GetString("The file is decrypted and saved here", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Файл зашифрован и сохранен тут.
+        /// </summary>
+        internal static string The_file_is_encrypted_and_saved_here {
+            get {
+                return ResourceManager.GetString("The file is encrypted and saved here", resourceCulture);
             }
         }
         

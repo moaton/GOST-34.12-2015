@@ -9,64 +9,15 @@ namespace Diploma_Project
     class main
     {
         public string keyByte = "";
+        public string keyText = "";
+        public int numbersOfBlock = 0;
+        public string plainTextLengthened = "";
 
-        byte[][] iterC = new byte[32][]; // массив итерационных констант
-        byte[][] iterK = new byte[10][]; // массив итерационных ключей
-        const int blockSize = 16;
 
-        //static byte[] Pi = new byte[256]
-        //{
-        //    252, 238, 221, 17, 207, 110, 49, 22, 251, 196, 250, 218, 35, 197, 4, 77,
-        //    233, 119, 240, 219, 147, 46, 153, 186, 23, 54, 241, 187, 20, 205, 95, 193,
-        //    249, 24, 101, 90, 226, 92, 239, 33, 129, 28, 60, 66, 139, 1, 142, 79,
-        //    5, 132, 2, 174, 227, 106, 143, 160, 6, 11, 237, 152, 127, 212, 211, 31,
-        //    235, 52, 44, 81, 234, 200, 72, 171, 242, 42, 104, 162, 253, 58, 206, 204,
-        //    181, 112, 14, 86, 8, 12, 118, 18, 191, 114, 19, 71, 156, 183, 93, 135,
-        //    21, 161, 150, 41, 16, 123, 154, 199, 243, 145, 120, 111, 157, 158, 178, 177,
-        //    50, 117, 25, 61, 255, 53, 138, 126, 109, 84, 198, 128, 195, 189, 13, 87,
-        //    223, 245, 36, 169, 62, 168, 67, 201, 215, 121, 214, 246, 124, 34, 185, 3,
-        //    224, 15, 236, 222, 122, 148, 176, 188, 220, 232, 40, 80, 78, 51, 10, 74,
-        //    167, 151, 96, 115, 30, 0, 98, 68, 26, 184, 56, 130, 100, 159, 38, 65,
-        //    173, 69, 70, 146, 39, 94, 85, 47, 140, 163, 165, 125, 105, 213, 149, 59,
-        //    7, 88, 179, 64, 134, 172, 29, 247, 48, 55, 107, 228, 136, 217, 231, 137,
-        //    225, 27, 131, 73, 76, 63, 248, 254, 141, 83, 170, 144, 202, 216, 133, 97,
-        //    32, 113, 103, 164, 45, 43, 9, 91, 203, 155, 37, 208, 190, 229, 108, 82,
-        //    89, 166, 116, 210, 230, 244, 180, 192, 209, 102, 175, 194, 57, 75, 99, 182
-        //};
-        //static byte[] Pi = {
-        //    (byte) 0xFC, (byte) 0xEE, (byte) 0xDD, 0x11, (byte) 0xCF, 0x6E, 0x31, 0x16,
-        //    (byte) 0xFB, (byte) 0xC4, (byte) 0xFA, (byte) 0xDA, 0x23, (byte) 0xC5, 0x04, 0x4D,
-        //    (byte) 0xE9, 0x77, (byte) 0xF0, (byte) 0xDB, (byte) 0x93, 0x2E, (byte) 0x99, (byte) 0xBA,
-        //    0x17, 0x36, (byte) 0xF1, (byte) 0xBB, 0x14, (byte) 0xCD, 0x5F, (byte) 0xC1,
-        //    (byte) 0xF9, 0x18, 0x65, 0x5A, (byte) 0xE2, 0x5C, (byte) 0xEF, 0x21,
-        //    (byte) 0x81, 0x1C, 0x3C, 0x42, (byte) 0x8B, 0x01, (byte) 0x8E, 0x4F,
-        //    0x05, (byte) 0x84, 0x02, (byte) 0xAE, (byte) 0xE3, 0x6A, (byte) 0x8F, (byte) 0xA0,
-        //    0x06, 0x0B, (byte) 0xED, (byte) 0x98, 0x7F, (byte) 0xD4, (byte) 0xD3, 0x1F,
-        //    (byte) 0xEB, 0x34, 0x2C, 0x51, (byte) 0xEA, (byte) 0xC8, 0x48, (byte) 0xAB,
-        //    (byte) 0xF2, 0x2A, 0x68, (byte) 0xA2, (byte) 0xFD, 0x3A, (byte) 0xCE, (byte) 0xCC,
-        //    (byte) 0xB5, 0x70, 0x0E, 0x56, 0x08, 0x0C, 0x76, 0x12,
-        //    (byte) 0xBF, 0x72, 0x13, 0x47, (byte) 0x9C, (byte) 0xB7, 0x5D, (byte) 0x87,
-        //    0x15, (byte) 0xA1, (byte) 0x96, 0x29, 0x10, 0x7B, (byte) 0x9A, (byte) 0xC7,
-        //    (byte) 0xF3, (byte) 0x91, 0x78, 0x6F, (byte) 0x9D, (byte) 0x9E, (byte) 0xB2, (byte) 0xB1,
-        //    0x32, 0x75, 0x19, 0x3D, (byte) 0xFF, 0x35, (byte) 0x8A, 0x7E,
-        //    0x6D, 0x54, (byte) 0xC6, (byte) 0x80, (byte) 0xC3, (byte) 0xBD, 0x0D, 0x57,
-        //    (byte) 0xDF, (byte) 0xF5, 0x24, (byte) 0xA9, 0x3E, (byte) 0xA8, (byte) 0x43, (byte) 0xC9,
-        //    (byte) 0xD7, 0x79, (byte) 0xD6, (byte) 0xF6, 0x7C, 0x22, (byte) 0xB9, 0x03,
-        //    (byte) 0xE0, 0x0F, (byte) 0xEC, (byte) 0xDE, 0x7A, (byte) 0x94, (byte) 0xB0, (byte) 0xBC,
-        //    (byte) 0xDC, (byte) 0xE8, 0x28, 0x50, 0x4E, 0x33, 0x0A, 0x4A,
-        //    (byte) 0xA7, (byte) 0x97, 0x60, 0x73, 0x1E, 0x00, 0x62, 0x44,
-        //    0x1A, (byte) 0xB8, 0x38, (byte) 0x82, 0x64, (byte) 0x9F, 0x26, 0x41,
-        //    (byte) 0xAD, 0x45, 0x46, (byte) 0x92, 0x27, 0x5E, 0x55, 0x2F,
-        //    (byte) 0x8C, (byte) 0xA3, (byte) 0xA5, 0x7D, 0x69, (byte) 0xD5, (byte) 0x95, 0x3B,
-        //    0x07, 0x58, (byte) 0xB3, 0x40, (byte) 0x86, (byte) 0xAC, 0x1D, (byte) 0xF7,
-        //    0x30, 0x37, 0x6B, (byte) 0xE4, (byte) 0x88, (byte) 0xD9, (byte) 0xE7, (byte) 0x89,
-        //    (byte) 0xE1, 0x1B, (byte) 0x83, 0x49, 0x4C, 0x3F, (byte) 0xF8, (byte) 0xFE,
-        //    (byte) 0x8D, 0x53, (byte) 0xAA, (byte) 0x90, (byte) 0xCA, (byte) 0xD8, (byte) 0x85, 0x61,
-        //    0x20, 0x71, 0x67, (byte) 0xA4, 0x2D, 0x2B, 0x09, 0x5B,
-        //    (byte) 0xCB, (byte) 0x9B, 0x25, (byte) 0xD0, (byte) 0xBE, (byte) 0xE5, 0x6C, 0x52,
-        //    0x59, (byte) 0xA6, 0x74, (byte) 0xD2, (byte) 0xE6, (byte) 0xF4, (byte) 0xB4, (byte) 0xC0,
-        //    (byte) 0xD1, 0x66, (byte) 0xAF, (byte) 0xC2, 0x39, 0x4B, 0x63, (byte) 0xB6
-        //};
+        byte[][] iterC = new byte[32][];    // итерациялық константалар массивтері
+        byte[][] iterK = new byte[10][];    // раундық кілттер массивтері
+        const int blockSize = 16;           // блок ұзындығы
+
         static byte[] Pi = {
             0xFC, 0xEE, 0xDD, 0x11, 0xCF, 0x6E, 0x31, 0x16, 0xFB, 0xC4, 0xFA, 0xDA, 0x23, 0xC5, 0x04, 0x4D,
             0xE9, 0x77, 0xF0, 0xDB, 0x93, 0x2E, 0x99, 0xBA, 0x17, 0x36, 0xF1, 0xBB, 0x14, 0xCD, 0x5F, 0xC1,
@@ -107,12 +58,12 @@ namespace Diploma_Project
 
         #region X Преобразование (Сложение по модулю 2)
 
-        static byte[] XOR(byte[] input1, byte[] input2) // X Преобразование (сложение 2х векторов по модулю 2)
+        static byte[] XOR(byte[] input1, byte[] input2)             // X Түрлендіру векторларды екілік модуль бойынша қосу (сложение 2х векторов по модулю 2)
         {
             byte[] output = new byte[blockSize];
             for (int i = 0; i < blockSize; i++)
             {
-                output[i] = Convert.ToByte(input1[i] ^ input2[i]); // ^ XOR - исключающий ИЛИ
+                output[i] = Convert.ToByte(input1[i] ^ input2[i]);  // ^ XOR - болдырмайтын НЕМЕСЕ (исключающий ИЛИ)
             }
             return output;
         }
@@ -190,8 +141,9 @@ namespace Diploma_Project
         public byte[] GostEncript(byte[] text, byte[] masterKey)
         {
             masterKey = Encoding.Default.GetBytes(LengthTo32Bytes(Encoding.Default.GetString(masterKey)));
-
+            
             keyByte = BitConverter.ToString(masterKey);
+            keyText = LengthTo32Bytes(Encoding.Default.GetString(masterKey));
 
             GostKeyGen(masterKey);          // Кілт өрістету
             int NumOfBlocks;                // 16 байтқа тең блок санын есептеуші
@@ -201,20 +153,24 @@ namespace Diploma_Project
             if ((text.Length % blockSize) == 0)
             {
                 NumOfBlocks = text.Length / blockSize;
+                numbersOfBlock = NumOfBlocks;
+                plainTextLengthened = BitConverter.ToString(OriginText);
                 Array.Resize(ref encrText, text.Length);
             }
             else
             {
                 NumOfBlocks = (text.Length / blockSize) + 1;
                 NumberOfNull = NumOfBlocks * blockSize - text.Length;
-                int StartLength = text.Length;
+                
                 Array.Resize(ref OriginText, OriginText.Length + NumberOfNull);
                 Array.Resize(ref encrText, OriginText.Length);
+                numbersOfBlock = NumOfBlocks;
                 if (NumberOfNull == 1) OriginText[OriginText.Length - 1] = 0x80;
                 else
                 {
                     for (int i = OriginText.Length - 1; i >= 0; i--)
                     {
+                        Console.WriteLine(i + " i");
                         if (i == OriginText.Length - 1)
                         {
                             OriginText[OriginText.Length - 1] = 0x81;
@@ -225,6 +181,8 @@ namespace Diploma_Project
                             break;
                         }
                     }
+                    Console.WriteLine(BitConverter.ToString(OriginText) + " OriginText");
+                    plainTextLengthened = BitConverter.ToString(OriginText);
                 }
             }
             for (int i = 0; i < NumOfBlocks; i++) // Шифрлеу операциясы
@@ -238,7 +196,7 @@ namespace Diploma_Project
                 {
                     block = XOR(block, iterK[j]);   // 2 модуль бойынша қосу
                     block = GostS(block);           // Сызықты емес түрлендіру S
-                    block = GostL(block);           // Пермутация
+                    block = GostL(block);           // Сызықты түрлендіру
                 }
                 block = XOR(block, iterK[9]);
                 for (int j = 0; j < blockSize; j++)
@@ -253,6 +211,7 @@ namespace Diploma_Project
         public byte[] GostDecript(byte[] file, byte[] masterKey)
         {
             GostKeyGen(masterKey);
+            keyText = Encoding.Default.GetString(masterKey);
             int NumOfBlocks = file.Length / blockSize; // Определение кол-ва блоков по 16 байт
             byte[] OriginText = file;
             byte[] decrText = new byte[file.Length]; // Массив для хранения зашифрованных байтов
@@ -296,7 +255,7 @@ namespace Diploma_Project
 
         #region Нелинейное_преобразование_(Операция_S)
 
-        static byte[] GostS(byte[] input) // Прямое нелинейное преобразование S
+        static byte[] GostS(byte[] input) // Сызықты емес түрлендіру S
         {
             byte[] output = new byte[blockSize];
             for (int i = 0; i < blockSize; i++)
@@ -306,7 +265,7 @@ namespace Diploma_Project
             return output;
         }
 
-        static byte[] GostSReverse(byte[] input) // Обратное нелинейное преобразование S
+        static byte[] GostSReverse(byte[] input) // Кері сызықты емес түрлендіруы S
         {
             byte[] output = new byte[blockSize];
             for (int i = 0; i < blockSize; i++)
@@ -382,7 +341,7 @@ namespace Diploma_Project
             return state;
         }
 
-        static byte[] GostLReverse(byte[] input)
+        static byte[] GostLReverse(byte[] input) // Кері сызықты түрлендіру
         {
             byte[] state = input;
             for (int i = 0; i < blockSize; i++)

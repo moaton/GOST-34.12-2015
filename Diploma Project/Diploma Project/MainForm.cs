@@ -178,23 +178,33 @@ namespace Diploma_Project
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(this.textBox1.ForeColor != System.Drawing.SystemColors.ScrollBar && this.textBox2.ForeColor != System.Drawing.SystemColors.ScrollBar)
+            Random rand = new Random();
+            if (this.textBox1.ForeColor != System.Drawing.SystemColors.ScrollBar && this.textBox2.ForeColor != System.Drawing.SystemColors.ScrollBar)
             {
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
                 main Gost = new main();                            //Создание экземпляра класса Кузнечик 
                 string textToEncrypt = this.textBox2.Text;
                 string password = this.textBox1.Text;
+                if(((textToEncrypt == "" && this.textBox2.Text == this.rm.GetString("Enter the text to encrypt/decrypt")) || (password == "" && this.textBox1.Text == this.rm.GetString("Enter the key"))) && !withFile)
+                {
+                    this.button1.Cursor = System.Windows.Forms.Cursors.No;
+                    return;
+                } else
+                {
+                    this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
+                }
 
-
-                stopWatch.Stop();
+                
                 string operation = "";
                 if (isEncryption)
                 {
                     if (withFile)
                     {
                         byte[] EncryptedFile = Gost.GostEncript(fileName, Encoding.Default.GetBytes(password)); //Получение массива байт зашифрованного файла
-                        File.WriteAllBytes("Encrfile.anet", EncryptedFile);
+                        string nameOfFile = $"Encrfile{rand.Next(1, 1000)}.anet";
+                        File.WriteAllBytes(nameOfFile, EncryptedFile);
+                        this.textBox3.Text = $"{this.rm.GetString("The file is encrypted and saved here")}: {@"C:\Users\moaton\source\repos\Diploma Project\Diploma Project\bin\Debug"} - {nameOfFile}";
                     } else
                     {
                         byte[] EncryptedText = Gost.GostEncript(Encoding.Default.GetBytes(textToEncrypt), Encoding.Default.GetBytes(password)); //Получение массива байт зашифрованного файла
@@ -210,7 +220,9 @@ namespace Diploma_Project
                     if (withFile)
                     {
                         byte[] DecryptedFile = Gost.GostDecript(fileName, Encoding.Default.GetBytes(password)); //Получение массива байт расшифрованного файла
-                        File.WriteAllBytes($"Decrfile.{extension}", DecryptedFile);
+                        string nameOfFile = $"Decrfile{rand.Next(1, 1000)}.{extension}";
+                        File.WriteAllBytes(nameOfFile, DecryptedFile);
+                        this.textBox3.Text = $"{this.rm.GetString("The file is decrypted and saved here")}: {@"C:\Users\moaton\source\repos\Diploma Project\Diploma Project\bin\Debug"} - {nameOfFile}";
                     } else
                     {
                         byte[] DecryptedText = Gost.GostDecript(Encoding.Default.GetBytes(textToEncrypt), Encoding.Default.GetBytes(password)); //Получение массива байт расшифрованного файла
@@ -222,6 +234,8 @@ namespace Diploma_Project
                    
                     operation = this.rm.GetString("The time of the decryption operation");
                 }
+                stopWatch.Stop();
+                this.textBox1.Text = Gost.keyText;
                 if (this.settingsChanged)
                 {
                     foreach (var Checkbox in this.checkboxes)
@@ -249,7 +263,7 @@ namespace Diploma_Project
                             case "isPlainText":
                                 if (Checkbox.Value)
                                 {
-                                    this.textBox4.Text +=  this.rm.GetString("Plain Text (HEX)") + ": " + string.Join(" ", Encoding.Default.GetBytes(textToEncrypt)) + Environment.NewLine + Environment.NewLine;
+                                    this.textBox4.Text +=  this.rm.GetString("Plain Text (HEX)") + ": " + BitConverter.ToString(Encoding.Default.GetBytes(textToEncrypt)) + Environment.NewLine + this.rm.GetString("Byte sequence") + ": " + string.Join(" ", Encoding.Default.GetBytes(textToEncrypt)) + Environment.NewLine + this.rm.GetString("Numbers of blocks") + ": " + Gost.numbersOfBlock + Environment.NewLine + this.rm.GetString("Plain Text (HEX)") + ": " + Gost.plainTextLengthened + Environment.NewLine + Environment.NewLine;
                                 }
                                 break;
                             default:
@@ -267,20 +281,14 @@ namespace Diploma_Project
         {
             Random rand = new Random();
             string keyGen = "";
-            int to, from;
-            if(isLatin)
+            string alphabet = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-()&@";
+            if (isCyrillic)
             {
-                to = 0x007A;
-                from = 0x0041;
-            } else
-            {
-                to = 0x44F;
-                from = 0x0410;
+                alphabet = "1234567890АВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя_-()&@";
             }
-            for(int i = 0; i < 16; i++)
+            for(int i = 0; i < 32; i++)
             {                
-                keyGen += rand.Next(0, 10);
-                keyGen += (char)rand.Next(from, to);
+                keyGen += alphabet[rand.Next(alphabet.Length)];
             }
             this.label13.Text = (keyGen.Length * 8) + " " + this.rm.GetString("Bit");
             this.textBox1.Text = keyGen;
@@ -293,7 +301,15 @@ namespace Diploma_Project
             if (tb.Text.Length > 32)
             {
                 tb.Text = tb.Text.Substring(0, 32);
-            }                
+            }
+            if (((this.textBox2.Text == "" && this.textBox2.Text == this.rm.GetString("Enter the text to encrypt/decrypt")) || (tb.Text == "" && this.textBox1.Text == this.rm.GetString("Enter the key"))) && !withFile)
+            {
+                this.button1.Cursor = System.Windows.Forms.Cursors.No;
+            }
+            else
+            {
+                this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
+            }
             this.label13.Text = tb.Text.Length * 8 + " " + this.rm.GetString("Bit");
         }
 
@@ -470,6 +486,46 @@ namespace Diploma_Project
             this.button4.BackColor = System.Drawing.SystemColors.ControlDark;
         }
 
+        public void checkAllCheckBoxes()
+        {
+            int count = 0;
+            foreach (var Checkbox in this.checkboxes.ToArray())
+            {
+                switch (Checkbox.Key)
+                {
+                    case "isPlainText":
+                        if (this.checkboxes[$"{Checkbox.Key}"])
+                        {
+                            count++;
+                        }
+                        break;
+                    case "isKey":
+                        if (this.checkboxes[$"{Checkbox.Key}"])
+                        {
+                            count++;
+                        }
+                        break;
+                    case "isRaundKeys":
+                        if (this.checkboxes[$"{Checkbox.Key}"])
+                        {
+                            count++;
+                        }
+                        break;
+                    case "isExecutionTime":
+                        if (this.checkboxes[$"{Checkbox.Key}"])
+                        {
+                            count++;
+                        }
+                        break;
+                }
+                if(count != 4)
+                {
+                    this.checkboxes[$"isAll"] = false;
+                    this.checkBox5.Checked = false;
+                }
+                    
+            }
+        }
         //All checkbox
         private void checkBox5_CheckedChanged(object sender, EventArgs e)
         {
@@ -575,18 +631,18 @@ namespace Diploma_Project
                 if(count == 0)
                 {
                     this.settingsChanged = false;
-                }
-
-                this.textBox4.Visible = false;
-                if (this.isSidebarOpen)
-                {
-                    this.textBox3.Size = new System.Drawing.Size(345, 272);
-                }
-                else
-                {
-                    this.textBox3.Size = new System.Drawing.Size(455, 272);
+                    this.textBox4.Visible = false;
+                    if (this.isSidebarOpen)
+                    {
+                        this.textBox3.Size = new System.Drawing.Size(345, 272);
+                    }
+                    else
+                    {
+                        this.textBox3.Size = new System.Drawing.Size(455, 272);
+                    }
                 }
             }
+            //checkAllCheckBoxes();
         }
         //Round Keys checkbox
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
@@ -625,15 +681,15 @@ namespace Diploma_Project
                 if (count == 0)
                 {
                     this.settingsChanged = false;
-                }
-                this.textBox4.Visible = false;
-                if (this.isSidebarOpen)
-                {
-                    this.textBox3.Size = new System.Drawing.Size(345, 272);
-                }
-                else
-                {
-                    this.textBox3.Size = new System.Drawing.Size(455, 272);
+                    this.textBox4.Visible = false;
+                    if (this.isSidebarOpen)
+                    {
+                        this.textBox3.Size = new System.Drawing.Size(345, 272);
+                    }
+                    else
+                    {
+                        this.textBox3.Size = new System.Drawing.Size(455, 272);
+                    }
                 }
             }
         }
@@ -674,16 +730,15 @@ namespace Diploma_Project
                 if (count == 0)
                 {
                     this.settingsChanged = false;
-                }
-
-                this.textBox4.Visible = false;
-                if (this.isSidebarOpen)
-                {
-                    this.textBox3.Size = new System.Drawing.Size(345, 272);
-                }
-                else
-                {
-                    this.textBox3.Size = new System.Drawing.Size(455, 272);
+                    this.textBox4.Visible = false;
+                    if (this.isSidebarOpen)
+                    {
+                        this.textBox3.Size = new System.Drawing.Size(345, 272);
+                    }
+                    else
+                    {
+                        this.textBox3.Size = new System.Drawing.Size(455, 272);
+                    }
                 }
             }
         }
@@ -724,15 +779,15 @@ namespace Diploma_Project
                 if (count == 0)
                 {
                     this.settingsChanged = false;
-                }
-                this.textBox4.Visible = false;
-                if (this.isSidebarOpen)
-                {
-                    this.textBox3.Size = new System.Drawing.Size(345, 272);
-                }
-                else
-                {
-                    this.textBox3.Size = new System.Drawing.Size(455, 272);
+                    this.textBox4.Visible = false;
+                    if (this.isSidebarOpen)
+                    {
+                        this.textBox3.Size = new System.Drawing.Size(345, 272);
+                    }
+                    else
+                    {
+                        this.textBox3.Size = new System.Drawing.Size(455, 272);
+                    }
                 }
             }
         }
@@ -777,9 +832,18 @@ namespace Diploma_Project
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            if(this.textBox2.ForeColor != System.Drawing.SystemColors.ScrollBar)
+            TextBox tb = sender as TextBox;
+            if (this.textBox2.ForeColor != System.Drawing.SystemColors.ScrollBar)
             {
                 this.textBox2.ForeColor = System.Drawing.SystemColors.WindowText;
+            }
+            if (((tb.Text == "" && this.textBox2.Text == this.rm.GetString("Enter the text to encrypt/decrypt")) || (this.textBox1.Text == "" && this.textBox1.Text == this.rm.GetString("Enter the key"))) && !withFile)
+            {
+                this.button1.Cursor = System.Windows.Forms.Cursors.No;
+            }
+            else
+            {
+                this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
             }
         }
         public void UpdateLang(string name)
@@ -891,6 +955,13 @@ namespace Diploma_Project
             this.button8.Text = this.rm.GetString("Choosed");
 
             this.withFile = true;
+            if (this.textBox1.Text != "" && this.textBox1.Text != this.rm.GetString("Enter the key"))
+            {
+                this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
+            } else
+            {
+                this.button1.Cursor = System.Windows.Forms.Cursors.No;
+            }
             //MessageBox.Show("Файл открыт");
         }
         private void checkBox6_CheckedChanged(object sender, EventArgs e)

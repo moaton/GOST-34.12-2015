@@ -359,7 +359,7 @@ namespace Diploma_Project
             // button1
             // 
             this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(162)))), ((int)(((byte)(45)))));
-            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button1.Cursor = System.Windows.Forms.Cursors.No;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button1.ForeColor = System.Drawing.Color.Snow;
             this.button1.Location = new System.Drawing.Point(403, 317);

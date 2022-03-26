@@ -129,6 +129,9 @@
   <data name="Bit" xml:space="preserve">
     <value>бит</value>
   </data>
+  <data name="Byte sequence" xml:space="preserve">
+    <value>Последовательность байтов</value>
+  </data>
   <data name="Choose" xml:space="preserve">
     <value>Выбрать</value>
   </data>
@@ -186,6 +189,9 @@
   <data name="Message" xml:space="preserve">
     <value>Текст</value>
   </data>
+  <data name="Numbers of blocks" xml:space="preserve">
+    <value>Количество блоков</value>
+  </data>
   <data name="Operation execution time" xml:space="preserve">
     <value>Время выполнения операции</value>
   </data>
@@ -209,6 +215,12 @@
   </data>
   <data name="Tact" xml:space="preserve">
     <value>Такт</value>
+  </data>
+  <data name="The file is decrypted and saved here" xml:space="preserve">
+    <value>Файл расшифрован и сохранен здесь</value>
+  </data>
+  <data name="The file is encrypted and saved here" xml:space="preserve">
+    <value>Файл зашифрован и сохранен тут</value>
   </data>
   <data name="The key must be 256 bits" xml:space="preserve">
     <value>Ключ должен быть 256 бит</value>
