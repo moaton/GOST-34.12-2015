@@ -32,7 +32,7 @@ namespace Diploma_Project
         // Language
         bool KZ = false;
         bool RU = false;
-        bool ENG = false;
+        bool ENG = true;
 
         // Language
         ResourceManager rm = new ResourceManager("Diploma_Project.en_local", Assembly.GetExecutingAssembly());

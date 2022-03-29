@@ -208,13 +208,13 @@ namespace Diploma_Project
             return encrText;
         } // Шифрлеу функциясы
 
-        public byte[] GostDecript(byte[] file, byte[] masterKey)
+        public byte[] GostDecript(byte[] text, byte[] masterKey)
         {
             GostKeyGen(masterKey);
             keyText = Encoding.Default.GetString(masterKey);
-            int NumOfBlocks = file.Length / blockSize; // Определение кол-ва блоков по 16 байт
-            byte[] OriginText = file;
-            byte[] decrText = new byte[file.Length]; // Массив для хранения зашифрованных байтов
+            int NumOfBlocks = text.Length / blockSize;  // 16 байтқа тең блок санын есептеу
+            byte[] OriginText = text;                   // Шифр мәтінді сақтайтын массив
+            byte[] decrText = new byte[text.Length];    // Ашық мәтінді сақтайтын массив
             for (int i = 0; i < NumOfBlocks; i++)
             {
                 byte[] block = new byte[blockSize];
