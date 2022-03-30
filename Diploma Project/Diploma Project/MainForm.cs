@@ -298,11 +298,15 @@ namespace Diploma_Project
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             TextBox tb = sender as TextBox;
+            if (this.textBox1.Text != "" && this.textBox1.Text != this.rm.GetString("Enter the key") && this.textBox1.ForeColor == System.Drawing.SystemColors.ScrollBar)
+            {
+                this.textBox1.ForeColor = System.Drawing.SystemColors.WindowText;
+            }
             if (tb.Text.Length > 32)
             {
                 tb.Text = tb.Text.Substring(0, 32);
             }
-            if (((this.textBox2.Text == "" && this.textBox2.Text == this.rm.GetString("Enter the text to encrypt/decrypt")) || (tb.Text == "" && this.textBox1.Text == this.rm.GetString("Enter the key"))) && !withFile)
+            if (((this.textBox1.Text == "" && this.textBox1.Text == this.rm.GetString("Enter the text to encrypt/decrypt")) || (tb.Text == "" && this.textBox1.Text == this.rm.GetString("Enter the key"))) && !withFile)
             {
                 this.button1.Cursor = System.Windows.Forms.Cursors.No;
             }
