@@ -168,6 +168,9 @@
   <data name="Enter the text to encrypt/decrypt" xml:space="preserve">
     <value>Введите текст для шифрования</value>
   </data>
+  <data name="Format" xml:space="preserve">
+    <value>Формат</value>
+  </data>
   <data name="G" xml:space="preserve">
     <value>Г</value>
   </data>
@@ -188,6 +191,9 @@
   </data>
   <data name="Message" xml:space="preserve">
     <value>Текст</value>
+  </data>
+  <data name="Name of File" xml:space="preserve">
+    <value>Название файла</value>
   </data>
   <data name="Numbers of blocks" xml:space="preserve">
     <value>Количество блоков</value>
@@ -221,6 +227,9 @@
   </data>
   <data name="The file is encrypted and saved here" xml:space="preserve">
     <value>Файл зашифрован и сохранен тут</value>
+  </data>
+  <data name="The file is selected" xml:space="preserve">
+    <value>Файл выбран</value>
   </data>
   <data name="The key must be 256 bits" xml:space="preserve">
     <value>Ключ должен быть 256 бит</value>

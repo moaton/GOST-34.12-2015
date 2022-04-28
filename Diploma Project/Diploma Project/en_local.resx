@@ -168,6 +168,9 @@
   <data name="Enter the text to encrypt/decrypt" xml:space="preserve">
     <value>Enter the text to encrypt/decrypt</value>
   </data>
+  <data name="Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
   <data name="G" xml:space="preserve">
     <value>G</value>
   </data>
@@ -188,6 +191,9 @@
   </data>
   <data name="Message" xml:space="preserve">
     <value>Message</value>
+  </data>
+  <data name="Name of File" xml:space="preserve">
+    <value>Name of File</value>
   </data>
   <data name="Numbers of blocks" xml:space="preserve">
     <value>Numbers of blocks</value>
@@ -221,6 +227,9 @@
   </data>
   <data name="The file is encrypted and saved here" xml:space="preserve">
     <value>The file is encrypted and saved here</value>
+  </data>
+  <data name="The file is selected" xml:space="preserve">
+    <value>The file is selected</value>
   </data>
   <data name="The key must be 256 bits" xml:space="preserve">
     <value>The key must be 256 bits</value>

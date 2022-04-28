@@ -16,32 +16,93 @@ namespace Diploma_Project
 {
     public partial class MainForm : Form
     {
-        private OpenFileDialog openFileDialog1;
-        bool withFile = false;
-        string extension = "txt";
-        bool isTxt = true;
-        bool isJpg = false;
-        bool isPng = false;
-        byte[] fileName;
-        //  Sidebar
-        bool isSidebarOpen = true;
-        bool isEncryption = true;
-        bool isDecription = false;
-        bool isSettings = false;
+        /// <summary>
+        /// Панельдер, батырмалар, өрістер бойынша шолу
+        /// --------------------------
+        /// panel1 - бүйір мәзір панелі
+        /// {
+        ///     label1 - ГОСТ 34-12.2015сөзі жапсырмасы
+        ///     label2 - шифрлеу сөзі жапсырмасы
+        ///     label3 - дешифрлеу сөзі жапсырмасы
+        ///     label10 - бүйір мәзір жабу символы (<)
+        ///     label11 - бүйір мәзір ашу символы (>)
+        ///     label14 - баптаулар сөзі жапсырмасы
+        /// }
+        /// panel2 - негізгі орта (panel3 және panel4 панельдерін қамтиді)
+        /// {
+        ///     panel3 - шифрлеу/дешифрлеу операциялары орындалатын панель
+        ///     {
+        ///         button1 - шифрлеу/дешифрлеу батырмасы
+        ///         button2 - кездейсоқ кілт жасау батырмасы
+        ///         button3 - латын әріптерді таңдау батырмасы
+        ///         button4 - кириллица әріптерді таңдау батырмасы
+        ///         button8 - файл таңдау батырмасы
+        ///    
+        ///         label4 - кілт сөзі жапсырмасы
+        ///         label5 - ашық мәтін/шифр мәтін сөзі жапсырмасы
+        ///         label6 - көмекші жапсырмасы (?)
+        ///         label7 - көмекші жапсырмасы (?)
+        ///         label8 - кілт сөзі жапсырмасы (көмекші)
+        ///         label9 - ашық мәтін/шифр мәтін сөзі жапсырмасы (көмекші)
+        ///         label12 - кездейсоқ кілт сөзі жапсырмасы
+        ///         label13 - кілт ұзындығын көрсетуші сөзі жапсырмасы
+        ///         label17 - файл таңдау сөзі жапсырмасы
+        ///    
+        ///         textBox1 - кілт енгізу өрісі
+        ///         textBox2 - ашық мәтін/шифр мәтін енгізу өрісі
+        ///         textBox3 - нәтиже өрісі
+        ///         textBox4 - қосымша баптаулар нәтиже өрісі
+        ///    
+        ///         checkBox6 - txt жалаулары
+        ///         checkBox7 - jpg жалаулары
+        ///         checkBox8 - png жалаулары
+        ///     }
+        ///     panel4 - баптауларды қамтитін панель
+        ///     {
+        ///     
+        ///         button5 - қазақ тілі таңдау батырмасы
+        ///         button6 - орыс тілі таңдау батырмасы
+        ///         button7 - ағылшын тілі таңдау батырмасы
+        ///     
+        ///         label15 - тіл сөзі жапсырмасы
+        ///         label16 - қосымша баптаулар сөз жапсырмасы
+        ///     
+        ///         checkBox1 - кілт қосымша баптауы
+        ///         checkBox2 - раундық кілт қосымша баптауы
+        ///         checkBox3 - операцияның орындалу уақыты қосымша баптауы
+        ///         checkBox4 - мәтін қосымша баптауы
+        ///         checkBox5 - барлығы қосымша баптауы
+        ///     }
+        /// }
+        /// </summary>
 
-        // Language
+
+        private OpenFileDialog openFileDialog1;
+        bool withFile = false;      // Егер шифрлеу кезінде файл таңдалатын болса
+        string extension = "txt";   // Дешифрленген кезде әдеткі формат
+        bool isTxt = true;          // 
+        bool isJpg = false;         //  > Таңдалған файл форматы
+        bool isPng = false;         // 
+        byte[] fileName;            // Файл аты
+        //  Бүйір мәзір
+        bool isSidebarOpen = true;  // Бүйір мәзір ашылуын тексеруші
+        bool isEncryption = true;   //
+        bool isDecription = false;  //  > Қай операция таңдалғанын тексеруші
+        bool isSettings = false;    //
+
+        // Таңдалған тіл тексеруші
         bool KZ = false;
         bool RU = false;
         bool ENG = true;
 
-        // Language
+        // Таңдалған тіл бойынша қажетті ресурсты таңдайтын аудармашы
         ResourceManager rm = new ResourceManager("Diploma_Project.en_local", Assembly.GetExecutingAssembly());
 
-        //  Key Language
+        //  Кілттің тілі
         bool isLatin = true;
         bool isCyrillic = false;
 
-        //  Settings checkboxes
+        //  Баптаулар жалаушалар (чекбокстар)
         bool settingsChanged = false;
         bool isAll = false;
         bool isRaundKeys = false;
@@ -49,12 +110,12 @@ namespace Diploma_Project
         bool isExecutionTime = false;
         bool isPlainText = false;
 
-        //  Placeholders
+        //  Толтырғыштар (placeholders)
         string enterKey = "Enter the key";
         string plainText = "Enter the text to encrypt/decrypt";
         string result = "The result is displayed here";
 
-
+        // Баптаулар жалаушыларын қамтитын сөздік
         Dictionary<string, bool> checkboxes = new Dictionary<string, bool>()
         {
             ["settingsChanged"] = false,
@@ -70,26 +131,6 @@ namespace Diploma_Project
             InitializeComponent();
         }
 
-
-        private void panel1_MouseHover(object sender, EventArgs e)
-        {
-            //this.panel1.Size = new System.Drawing.Size(140, 329);
-            //this.label2.Size = new System.Drawing.Size(140, 30);
-            //this.label3.Size = new System.Drawing.Size(140, 30);
-            //this.label1.Text = "GOST 34.12";
-            //this.label2.Text = "Encryption";
-            //this.label3.Text = "Decryption";
-        }
-
-        private void panel1_MouseLeave(object sender, EventArgs e)
-        {
-            //this.panel1.Size = new System.Drawing.Size(30, 329);
-            //this.label2.Size = new System.Drawing.Size(30, 30);
-            //this.label3.Size = new System.Drawing.Size(30, 30);
-            //this.label1.Text = "G";
-            //this.label2.Text = "E";
-            //this.label3.Text = "D";
-        }
 
         private void label6_MouseHover(object sender, EventArgs e)
         {
@@ -319,6 +360,15 @@ namespace Diploma_Project
 
         private void label2_Click(object sender, EventArgs e)
         {
+            fileName = null;
+            this.button8.Text = this.rm.GetString("Choose");
+            this.textBox2.Enabled = true;
+            this.withFile = false;
+            this.checkBox1.Enabled = true;
+            this.checkBox2.Enabled = true;
+            this.checkBox3.Enabled = true;
+            this.checkBox4.Enabled = true;
+            this.checkBox5.Enabled = true;
             isEncryption = true;
             isDecription = false;
             isSettings = false;
@@ -366,6 +416,15 @@ namespace Diploma_Project
 
         private void label3_Click(object sender, EventArgs e)
         {
+            fileName = null;
+            this.button8.Text = this.rm.GetString("Choose");
+            this.textBox2.Enabled = true;
+            this.withFile = false;
+            this.checkBox1.Enabled = true;
+            this.checkBox2.Enabled = true;
+            this.checkBox3.Enabled = true;
+            this.checkBox4.Enabled = true;
+            this.checkBox5.Enabled = true;
             isDecription = true;
             isEncryption = false;
             isSettings = false;
@@ -946,6 +1005,9 @@ namespace Diploma_Project
                 return;
             //// получаем выбранный файл
             string filename = openFileDialog1.FileName;
+            Console.WriteLine(filename.Split(Convert.ToChar(92))[filename.Split(Convert.ToChar(92)).Length-1]);
+            this.textBox3.Text = $"{this.rm.GetString("The file is selected")}: {filename}{Environment.NewLine}{this.rm.GetString("Name of File")}: {filename.Split(Convert.ToChar(92))[filename.Split(Convert.ToChar(92)).Length - 1].Split(Convert.ToChar(46))[0]}{Environment.NewLine}{this.rm.GetString("Format")}: {filename.Split(Convert.ToChar(92))[filename.Split(Convert.ToChar(92)).Length - 1].Split(Convert.ToChar(46))[1]}";
+            Console.WriteLine(filename);
             //// читаем файл в строку
             //string fileText = System.IO.File.ReadAllText(filename);
             //this.textBox2.Text = fileText;
@@ -959,6 +1021,16 @@ namespace Diploma_Project
             this.button8.Text = this.rm.GetString("Choosed");
 
             this.withFile = true;
+            this.checkBox1.Enabled = false;
+            this.checkBox1.Checked = false;
+            this.checkBox2.Enabled = false;
+            this.checkBox2.Checked = false;
+            this.checkBox3.Enabled = false;
+            this.checkBox3.Checked = false;
+            this.checkBox4.Enabled = false;
+            this.checkBox4.Checked = false;
+            this.checkBox5.Enabled = false;
+            this.checkBox5.Checked = false;
             if (this.textBox1.Text != "" && this.textBox1.Text != this.rm.GetString("Enter the key"))
             {
                 this.button1.Cursor = System.Windows.Forms.Cursors.Hand;

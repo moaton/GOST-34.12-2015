@@ -214,6 +214,15 @@ namespace Diploma_Project {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Format.
+        /// </summary>
+        internal static string Format {
+            get {
+                return ResourceManager.GetString("Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на G.
         /// </summary>
         internal static string G {
@@ -273,6 +282,15 @@ namespace Diploma_Project {
         internal static string Message {
             get {
                 return ResourceManager.GetString("Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Name of File.
+        /// </summary>
+        internal static string Name_of_File {
+            get {
+                return ResourceManager.GetString("Name of File", resourceCulture);
             }
         }
         
@@ -372,6 +390,15 @@ namespace Diploma_Project {
         internal static string The_file_is_encrypted_and_saved_here {
             get {
                 return ResourceManager.GetString("The file is encrypted and saved here", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на The file is selected.
+        /// </summary>
+        internal static string The_file_is_selected {
+            get {
+                return ResourceManager.GetString("The file is selected", resourceCulture);
             }
         }
         

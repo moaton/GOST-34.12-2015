@@ -18,6 +18,8 @@ namespace Diploma_Project
         byte[][] iterK = new byte[10][];    // раундық кілттер массивтері
         const int blockSize = 16;           // блок ұзындығы
 
+        #region Ауыстыру массиві (S ауыстыру үшін)
+
         static byte[] Pi = {
             0xFC, 0xEE, 0xDD, 0x11, 0xCF, 0x6E, 0x31, 0x16, 0xFB, 0xC4, 0xFA, 0xDA, 0x23, 0xC5, 0x04, 0x4D,
             0xE9, 0x77, 0xF0, 0xDB, 0x93, 0x2E, 0x99, 0xBA, 0x17, 0x36, 0xF1, 0xBB, 0x14, 0xCD, 0x5F, 0xC1,
@@ -56,7 +58,29 @@ namespace Diploma_Project
             0x12, 0x1A, 0x48, 0x68, 0xF5, 0x81, 0x8B, 0xC7, 0xD6, 0x20, 0x0A, 0x08, 0x00, 0x4C, 0xD7, 0x74
         };
 
-        #region X Преобразование (Сложение по модулю 2)
+        #endregion
+
+        #region 32 байтқа келтіру функциясы
+        private string LengthTo32Bytes(string str)
+        {
+            if (str.Length < 32)
+            {
+                int diff = 32 - str.Length;
+                int j = 0;
+                for (int i = str.Length; i < 32; i++)
+                {
+                    str += str.Substring(j, 1);
+                    if (j == str.Length - 1) j = 0;
+                    else j++;
+                }
+                return str;
+            }
+            else if (str.Length > 32) return str = str.Substring(0, 32);
+            else return str;
+        }
+        #endregion
+
+        #region Сақиналы қосынды (XOR)
 
         static byte[] XOR(byte[] input1, byte[] input2)             // X Түрлендіру векторларды екілік модуль бойынша қосу (сложение 2х векторов по модулю 2)
         {
@@ -70,190 +94,7 @@ namespace Diploma_Project
 
         #endregion
 
-        #region Генерация_раундовых_ключей
-
-        private void GostF(byte[] input1, byte[] input2, ref byte[] output1, ref byte[] output2, byte[] round_C)
-        {
-            byte[] state = new byte[blockSize];
-            state = XOR(input1, round_C);
-            state = GostS(state);
-            state = GostL(state);
-            output1 = XOR(state, input2);
-            output2 = input1;
-        }
-
-        private void GostKeyGen(byte[] mas_key)
-        {
-            #region Генерация раундовых констант
-
-            byte[][] iterNum = new byte[32][];
-            for (int i = 0; i < 32; i++)
-            {
-                iterNum[i] = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Convert.ToByte(i + 1) };
-                iterC[i] = GostL(iterNum[i]);
-            }
-
-            #endregion
-
-            #region Генерация_первых_2-х_ключей
-
-            byte[] A = new byte[blockSize];
-            for (int i = 0; i < blockSize; i++) A[i] = mas_key[i];
-            byte[] B = new byte[blockSize];
-            int j = 0;
-            for (int i = blockSize; i < 32; i++)
-            {
-                B[j] = mas_key[i];
-                j++;
-            }
-            j = 0;
-            iterK[0] = B;
-            iterK[1] = A;
-
-            byte[] C = new byte[blockSize];
-            byte[] D = new byte[blockSize];
-            #endregion
-
-            #region Генерация_остальных_ключей
-
-            for (int i = 0; i < 4; i++)
-            {
-                GostF(A, B, ref C, ref D, iterC[0 + 8 * i]);
-                GostF(C, D, ref A, ref B, iterC[1 + 8 * i]);
-                GostF(A, B, ref C, ref D, iterC[2 + 8 * i]);
-                GostF(C, D, ref A, ref B, iterC[3 + 8 * i]);
-                GostF(A, B, ref C, ref D, iterC[4 + 8 * i]);
-                GostF(C, D, ref A, ref B, iterC[5 + 8 * i]);
-                GostF(A, B, ref C, ref D, iterC[6 + 8 * i]);
-                GostF(C, D, ref A, ref B, iterC[7 + 8 * i]);
-                iterK[2 * i + 2] = A;
-                iterK[2 * i + 3] = B;
-            }
-
-            #endregion
-
-        }
-
-        #endregion
-
-        #region Зашифрование и расшифрование
-
-        public byte[] GostEncript(byte[] text, byte[] masterKey)
-        {
-            masterKey = Encoding.Default.GetBytes(LengthTo32Bytes(Encoding.Default.GetString(masterKey)));
-            
-            keyByte = BitConverter.ToString(masterKey);
-            keyText = LengthTo32Bytes(Encoding.Default.GetString(masterKey));
-
-            GostKeyGen(masterKey);          // Кілт өрістету
-            int NumOfBlocks;                // 16 байтқа тең блок санын есептеуші
-            int NumberOfNull;               // жетіспейтін байт санын есептеуші
-            byte[] OriginText = text;       // Ашық мәтін
-            byte[] encrText = new byte[0];  // Шифрленген байт сақтаушы массив
-            if ((text.Length % blockSize) == 0)
-            {
-                NumOfBlocks = text.Length / blockSize;
-                numbersOfBlock = NumOfBlocks;
-                plainTextLengthened = BitConverter.ToString(OriginText);
-                Array.Resize(ref encrText, text.Length);
-            }
-            else
-            {
-                NumOfBlocks = (text.Length / blockSize) + 1;
-                NumberOfNull = NumOfBlocks * blockSize - text.Length;
-                
-                Array.Resize(ref OriginText, OriginText.Length + NumberOfNull);
-                Array.Resize(ref encrText, OriginText.Length);
-                numbersOfBlock = NumOfBlocks;
-                if (NumberOfNull == 1) OriginText[OriginText.Length - 1] = 0x80;
-                else
-                {
-                    for (int i = OriginText.Length - 1; i >= 0; i--)
-                    {
-                        Console.WriteLine(i + " i");
-                        if (i == OriginText.Length - 1)
-                        {
-                            OriginText[OriginText.Length - 1] = 0x81;
-                        }
-                        else if (OriginText[i] != 0)
-                        {
-                            OriginText[i + 1] = 0x01;
-                            break;
-                        }
-                    }
-                    Console.WriteLine(BitConverter.ToString(OriginText) + " OriginText");
-                    plainTextLengthened = BitConverter.ToString(OriginText);
-                }
-            }
-            for (int i = 0; i < NumOfBlocks; i++) // Шифрлеу операциясы
-            {
-                byte[] block = new byte[blockSize];
-                for (int j = 0; j < blockSize; j++)
-                {
-                    block[j] = OriginText[i * blockSize + j];
-                }
-                for (int j = 0; j < 9; j++)
-                {
-                    block = XOR(block, iterK[j]);   // 2 модуль бойынша қосу
-                    block = GostS(block);           // Сызықты емес түрлендіру S
-                    block = GostL(block);           // Сызықты түрлендіру
-                }
-                block = XOR(block, iterK[9]);
-                for (int j = 0; j < blockSize; j++)
-                {
-                    encrText[i * blockSize + j] = block[j];
-                }
-            }
-            getRoundKeys();
-            return encrText;
-        } // Шифрлеу функциясы
-
-        public byte[] GostDecript(byte[] text, byte[] masterKey)
-        {
-            GostKeyGen(masterKey);
-            keyText = Encoding.Default.GetString(masterKey);
-            int NumOfBlocks = text.Length / blockSize;  // 16 байтқа тең блок санын есептеу
-            byte[] OriginText = text;                   // Шифр мәтінді сақтайтын массив
-            byte[] decrText = new byte[text.Length];    // Ашық мәтінді сақтайтын массив
-            for (int i = 0; i < NumOfBlocks; i++)
-            {
-                byte[] block = new byte[blockSize];
-                for (int j = 0; j < blockSize; j++)
-                {
-                    block[j] = OriginText[i * blockSize + j];
-                }
-                block = XOR(block, iterK[9]);
-                for (int j = 8; j >= 0; j--)
-                { 
-                    block = GostLReverse(block);
-                    block = GostSReverse(block);
-                    block = XOR(block, iterK[j]);
-                }
-                for (int j = 0; j < blockSize; j++)
-                {
-                    decrText[i * blockSize + j] = block[j];
-                }
-                if (i == NumOfBlocks - 1 && (decrText[decrText.Length - 1] == 0x81 || decrText[decrText.Length - 1] == 0x80))
-                {
-                    if (decrText[decrText.Length - 1] == 0x81)
-                    {
-                        int Zeros = 0;
-                        for (int j = decrText.Length - 1; j > 0; j--)
-                        {
-                            if (decrText[j] == 0x81 || decrText[j] == 0x01 || decrText[j] == 0) Zeros++;
-                            else break;
-                        }
-                        Array.Resize(ref decrText, decrText.Length - Zeros);
-                    }
-                    if (decrText[decrText.Length - 1] == 0x80) Array.Resize(ref decrText, decrText.Length - 1);
-                }
-            }
-            return decrText;
-        }
-
-        #endregion
-
-        #region Нелинейное_преобразование_(Операция_S)
+        #region Сызықты емес ауыстыру (S)
 
         static byte[] GostS(byte[] input) // Сызықты емес түрлендіру S
         {
@@ -276,7 +117,7 @@ namespace Diploma_Project
         }
         #endregion
 
-        #region Линейное_преобразование_(Операция_L)
+        #region Сызықты ауыстыру (L)
 
         static byte GostMulInGF(byte a, byte b)
         {
@@ -353,24 +194,201 @@ namespace Diploma_Project
 
         #endregion
 
-        private string LengthTo32Bytes(string str)
+        #region Раундық кілттерді жасау
+
+        // Фейстель желісі
+        private void GostF(byte[] input1, byte[] input2, ref byte[] output1, ref byte[] output2, byte[] round_C)
         {
-            if (str.Length < 32)
+            byte[] state = new byte[blockSize];
+            state = XOR(input1, round_C);   // Сақиналы қосынды
+            state = GostS(state);           // Сызықты емес ауыстыру
+            state = GostL(state);           // Сызықты ауыстыру
+            output1 = XOR(state, input2);   // Сақиналы қосынды
+            output2 = input1;
+        }
+        // Кілт өрістету
+        private void GostKeyGeneration(byte[] master_key)
+        {
+            #region Раундық константаларды жасау
+
+            byte[][] iterNum = new byte[32][];
+            for (int i = 0; i < 32; i++)
             {
-                int diff = 32 - str.Length;
-                int j = 0;
-                for (int i = str.Length; i < 32; i++)
-                {
-                    str += str.Substring(j, 1);
-                    if (j == str.Length - 1) j = 0;
-                    else j++;
-                }
-                return str;
+                iterNum[i] = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Convert.ToByte(i + 1) };
+                iterC[i] = GostL(iterNum[i]);
             }
-            else if (str.Length > 32) return str = str.Substring(0, 32);
-            else return str;
+
+            #endregion
+
+            #region Алғашқы екі кілтті жасау
+
+            byte[] A = new byte[blockSize];
+            for (int i = 0; i < blockSize; i++) A[i] = master_key[i];
+            byte[] B = new byte[blockSize];
+            int j = 0;
+            for (int i = blockSize; i < 32; i++)
+            {
+                B[j] = master_key[i];
+                j++;
+            }
+            j = 0;
+            iterK[0] = B;
+            iterK[1] = A;
+
+            byte[] C = new byte[blockSize];
+            byte[] D = new byte[blockSize];
+            #endregion
+
+            #region Қалған 8 кілтті жасау
+
+            for (int i = 0; i < 4; i++)
+            {
+                GostF(A, B, ref C, ref D, iterC[0 + 8 * i]);
+                GostF(C, D, ref A, ref B, iterC[1 + 8 * i]);
+                GostF(A, B, ref C, ref D, iterC[2 + 8 * i]);
+                GostF(C, D, ref A, ref B, iterC[3 + 8 * i]);
+                GostF(A, B, ref C, ref D, iterC[4 + 8 * i]);
+                GostF(C, D, ref A, ref B, iterC[5 + 8 * i]);
+                GostF(A, B, ref C, ref D, iterC[6 + 8 * i]);
+                GostF(C, D, ref A, ref B, iterC[7 + 8 * i]);
+                iterK[2 * i + 2] = A;
+                iterK[2 * i + 3] = B;
+            }
+
+            #endregion
+
         }
 
+        #endregion
+
+        #region Шифрлеу және дешифрлеу
+
+        #region Шифрлеу операциясы
+        public byte[] GostEncript(byte[] text, byte[] masterKey)
+        {
+            masterKey = Encoding.Default.GetBytes(LengthTo32Bytes(Encoding.Default.GetString(masterKey)));
+            
+            keyByte = BitConverter.ToString(masterKey);
+            keyText = LengthTo32Bytes(Encoding.Default.GetString(masterKey));
+
+            GostKeyGeneration(masterKey);          // Кілт өрістету
+            int NumOfBlocks;                // 16 байтқа тең блок санын есептеуші
+            int NumberOfNull;               // жетіспейтін байт санын есептеуші
+            byte[] OriginText = text;       // Ашық мәтін
+            byte[] encrText = new byte[0];  // Шифрленген байт сақтаушы массив
+            if ((text.Length % blockSize) == 0)
+            {
+                NumOfBlocks = text.Length / blockSize;
+                numbersOfBlock = NumOfBlocks;
+                plainTextLengthened = BitConverter.ToString(OriginText);
+                Array.Resize(ref encrText, text.Length);
+            }
+            else
+            {
+                NumOfBlocks = (text.Length / blockSize) + 1;
+                NumberOfNull = NumOfBlocks * blockSize - text.Length;
+                
+                Array.Resize(ref OriginText, OriginText.Length + NumberOfNull);
+                Array.Resize(ref encrText, OriginText.Length);
+                numbersOfBlock = NumOfBlocks;
+                if (NumberOfNull == 1) OriginText[OriginText.Length - 1] = 0x80;
+                else
+                {
+                    for (int i = OriginText.Length - 1; i >= 0; i--)
+                    {
+                        Console.WriteLine(i + " i");
+                        if (i == OriginText.Length - 1)
+                        {
+                            OriginText[OriginText.Length - 1] = 0x81;
+                        }
+                        else if (OriginText[i] != 0)
+                        {
+                            OriginText[i + 1] = 0x01;
+                            break;
+                        }
+                    }
+                    Console.WriteLine(BitConverter.ToString(OriginText) + " OriginText");
+                    plainTextLengthened = BitConverter.ToString(OriginText);
+                }
+            }
+            for (int i = 0; i < NumOfBlocks; i++) // Шифрлеу операциясы
+            {
+                byte[] block = new byte[blockSize];
+                for (int j = 0; j < blockSize; j++)
+                {
+                    block[j] = OriginText[i * blockSize + j];
+                }
+                for (int j = 0; j < 9; j++)
+                {
+                    block = XOR(block, iterK[j]);   // 2 модуль бойынша қосу
+                    block = GostS(block);           // Сызықты емес түрлендіру S
+                    block = GostL(block);           // Сызықты түрлендіру
+                }
+                block = XOR(block, iterK[9]);
+                for (int j = 0; j < blockSize; j++)
+                {
+                    encrText[i * blockSize + j] = block[j];
+                }
+            }
+            getRoundKeys();
+            return encrText;
+        } // Шифрлеу функциясы
+
+        #endregion
+
+        #region Дешифрлеу операциясы
+        public byte[] GostDecript(byte[] text, byte[] masterKey)
+        {
+            GostKeyGeneration(masterKey);
+            keyText = Encoding.Default.GetString(masterKey);
+            keyByte = BitConverter.ToString(masterKey);
+            int NumOfBlocks = text.Length / blockSize;  // 16 байтқа тең блок санын есептеу
+            byte[] OriginText = text;                   // Шифр мәтінді сақтайтын массив
+            byte[] decrText = new byte[text.Length];    // Ашық мәтінді сақтайтын массив
+            plainTextLengthened = BitConverter.ToString(OriginText);
+            numbersOfBlock = NumOfBlocks;
+            for (int i = 0; i < NumOfBlocks; i++)
+            {
+                byte[] block = new byte[blockSize];
+                for (int j = 0; j < blockSize; j++)
+                {
+                    block[j] = OriginText[i * blockSize + j];
+                }
+                block = XOR(block, iterK[9]);
+                for (int j = 8; j >= 0; j--)
+                { 
+                    block = GostLReverse(block);
+                    block = GostSReverse(block);
+                    block = XOR(block, iterK[j]);
+                }
+                for (int j = 0; j < blockSize; j++)
+                {
+                    decrText[i * blockSize + j] = block[j];
+                }
+                if (i == NumOfBlocks - 1 && (decrText[decrText.Length - 1] == 0x81 || decrText[decrText.Length - 1] == 0x80))
+                {
+                    if (decrText[decrText.Length - 1] == 0x81)
+                    {
+                        int Zeros = 0;
+                        for (int j = decrText.Length - 1; j > 0; j--)
+                        {
+                            if (decrText[j] == 0x81 || decrText[j] == 0x01 || decrText[j] == 0) Zeros++;
+                            else break;
+                        }
+                        Array.Resize(ref decrText, decrText.Length - Zeros);
+                    }
+                    if (decrText[decrText.Length - 1] == 0x80) Array.Resize(ref decrText, decrText.Length - 1);
+                }
+            }
+            getRoundKeys();
+            return decrText;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Раундық кілттерді алу функциясы (Қосымша баптаулар)
         public string getRoundKeys()
         {
             String keys = "";
@@ -380,6 +398,7 @@ namespace Diploma_Project
             }
             return keys;
         }
+        #endregion
 
     }
 }
